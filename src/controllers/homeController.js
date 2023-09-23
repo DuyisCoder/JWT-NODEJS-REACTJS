@@ -1,11 +1,14 @@
-
-const handleHello = (req, res) => {
-    res.send('hello');
-}
+import userServices from '../services/userServices'
 const getViewUser = (req, res) => {
-    res.render('home.ejs')
+    res.render('user.ejs')
+}
+const handleCreateUser = async (req, res) => {
+    let { email, password, username } = req.body;
+    userServices.createNewUser(email, password, username);
+
+    res.send('OKKK');
 }
 
 module.exports = {
-    handleHello, getViewUser
+    getViewUser, handleCreateUser
 }

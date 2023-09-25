@@ -1,4 +1,4 @@
-import connection from '../configs/database'
+import connection from '../config/database'
 import userServices from '../services/userServices'
 const getViewUser = (req, res) => {
     res.render('user.ejs')

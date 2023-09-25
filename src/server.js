@@ -1,5 +1,5 @@
 import express from 'express'
-import viewEngine from './configs/viewEngine';
+import viewEngine from './config/viewEngine';
 import initWebRoutes from './routes/web';
 import bodyParser from 'body-parser';
 const app = express();

@@ -12,7 +12,7 @@ const hashUserPassword = (userPassword) => {
 }
 const createNewUser = async (email, password, username) => {
     let hashPass = hashUserPassword(password);
-    await connection.query(`INSERT INTO users (email,password,username)
+    const [result, field] = await connection.query(`INSERT INTO users (email,password,username)
     VALUES (? ,?,?)
 `, [email, hashPass, username])
 }
@@ -21,10 +21,20 @@ const getAllUsers = async () => {
     return result;
 }
 const removeUser = async (userId) => {
-
-    const [results, fields] = await connection.query(`DELETE from users where = ? `, [userId]);
+    const [results, fields] = await connection.query(`DELETE from users where id= ? `, [userId]);
+    console.log(userId);
+    return results;
+}
+const getUserbyId = async (userId) => {
+    const [results, fields] = await connection.query(`Select * from users where id=?`, [userId]);
+    return results;
+}
+const updateUser = async (email, username, userId) => {
+    const [results, fields] = await connection.query(`
+    Update users Set email=?,username=? Where id=?`
+        , [email, username, userId]);
     return results;
 }
 module.exports = {
-    createNewUser, getAllUsers, removeUser
+    createNewUser, getAllUsers, removeUser, getUserbyId, updateUser
 }

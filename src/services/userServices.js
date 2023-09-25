@@ -16,10 +16,15 @@ const createNewUser = async (email, password, username) => {
     VALUES (? ,?,?)
 `, [email, hashPass, username])
 }
-const getUserList = async () => {
+const getAllUsers = async () => {
     const [result, field] = await connection.query(`Select* from users`);
     return result;
 }
+const removeUser = async (userId) => {
+
+    const [results, fields] = await connection.query(`DELETE from users where = ? `, [userId]);
+    return results;
+}
 module.exports = {
-    createNewUser, getUserList
+    createNewUser, getAllUsers, removeUser
 }

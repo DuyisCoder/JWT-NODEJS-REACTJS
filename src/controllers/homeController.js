@@ -23,7 +23,7 @@ const updatePage = async (req, res) => {
     let userId = req.params.id;
     let user = await userServices.getUserbyId(userId);
     let userData = {};
-    user && user.length > 0 ? userData = user[0] : userData = {};
+    userData = user;
     res.render('edit.ejs', { user: userData });
 }
 const updateUser = async (req, res) => {

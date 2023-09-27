@@ -31,22 +31,28 @@ const createNewUser = async (email, password, username) => {
     }
 }
 const getAlluser = async () => {
-    const [result, field] = await connection.query(`Select* from user`);
-    return result;
+    let user = [];
+    user = db.User.findAll();
+    return user;
 }
 const removeUser = async (userId) => {
-    const [results, fields] = await connection.query(`DELETE from user where id= ? `, [userId]);
-    return results;
+    await db.User.destroy({
+        where: { id: userId }
+    })
 }
 const getUserbyId = async (userId) => {
-    const [results, fields] = await connection.query(`Select * from user where id=?`, [userId]);
-    return results;
+    let user = {};
+    user = await db.User.findOne({
+        where: { id: userId }
+    })
+    // CONVERT Sequelize Modals to Javascript thuần
+    return user.get({ plain: true });
 }
 const updateUser = async (email, username, userId) => {
-    const [results, fields] = await connection.query(`
-    Update user Set email=?,username=? Where id=?`
-        , [email, username, userId]);
-    return results;
+    await db.User.update({
+        email: email,
+        username: username,
+    }, { where: { id: userId } })
 }
 module.exports = {
     createNewUser, getAlluser, removeUser, getUserbyId, updateUser

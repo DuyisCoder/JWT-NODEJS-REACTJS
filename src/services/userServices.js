@@ -1,8 +1,14 @@
-import connection from '../config/connectDB';
+// import connection from '../config/connectDB';
 import bcrypt from 'bcryptjs'
 import db from '../models/index'
 const salt = bcrypt.genSaltSync(10);
+import mysql from 'mysql2/promise'
 
+const connection = mysql.createPool({
+    host: 'localhost',
+    database: 'jwt',
+    user: 'root',
+})
 const hashUserPassword = (userPassword) => {
     // // Mã hóa mật khẩu
     // let hashPassword = bcrypt.hashSync(password, salt);
@@ -14,11 +20,12 @@ const hashUserPassword = (userPassword) => {
 const createNewUser = async (email, password, username) => {
     let hashPass = hashUserPassword(password);
     try {
-        db.user.save({
+        await db.User.create({
             email: email,
             password: hashPass,
             username: username
         })
+        console.log("Thành công");
     } catch (error) {
         console.log("Check error", error);
     }

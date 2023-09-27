@@ -31,6 +31,24 @@ const createNewUser = async (email, password, username) => {
     }
 }
 const getAlluser = async () => {
+    // test relationship
+    let newUser = await db.User.findOne({
+        where: { id: 1 },
+        attributes: ["id", "username", "email"], // dùng để log ra những thông tin cần thiết
+        include: { model: db.Group, attributes: ["name", "description"] },
+        raw: true,
+        nest: true // dùng để gom các trường chung vào 1 object
+    })
+    console.log("Check new user", newUser);
+    // let newRoles = await db.Role.findAll({
+    //     where: { id: 1 },
+    //     include: { model: db.Group, where: { id: 1 } },
+    //     raw: true,
+    //     nest: true // dùng để gom các trường chung vào 1 object
+    // })
+    // console.log("Check new user", newRoles);
+
+
     let user = [];
     user = db.User.findAll();
     return user;

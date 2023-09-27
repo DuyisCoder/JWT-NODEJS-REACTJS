@@ -1,5 +1,6 @@
-import connection from '../config/database'
+import connection from '../config/connectDB';
 import bcrypt from 'bcryptjs'
+import db from '../models/index'
 const salt = bcrypt.genSaltSync(10);
 
 const hashUserPassword = (userPassword) => {
@@ -12,29 +13,34 @@ const hashUserPassword = (userPassword) => {
 }
 const createNewUser = async (email, password, username) => {
     let hashPass = hashUserPassword(password);
-    const [result, field] = await connection.query(`INSERT INTO users (email,password,username)
-    VALUES (? ,?,?)
-`, [email, hashPass, username])
+    try {
+        db.user.save({
+            email: email,
+            password: hashPass,
+            username: username
+        })
+    } catch (error) {
+        console.log("Check error", error);
+    }
 }
-const getAllUsers = async () => {
-    const [result, field] = await connection.query(`Select* from users`);
+const getAlluser = async () => {
+    const [result, field] = await connection.query(`Select* from user`);
     return result;
 }
 const removeUser = async (userId) => {
-    const [results, fields] = await connection.query(`DELETE from users where id= ? `, [userId]);
-    console.log(userId);
+    const [results, fields] = await connection.query(`DELETE from user where id= ? `, [userId]);
     return results;
 }
 const getUserbyId = async (userId) => {
-    const [results, fields] = await connection.query(`Select * from users where id=?`, [userId]);
+    const [results, fields] = await connection.query(`Select * from user where id=?`, [userId]);
     return results;
 }
 const updateUser = async (email, username, userId) => {
     const [results, fields] = await connection.query(`
-    Update users Set email=?,username=? Where id=?`
+    Update user Set email=?,username=? Where id=?`
         , [email, username, userId]);
     return results;
 }
 module.exports = {
-    createNewUser, getAllUsers, removeUser, getUserbyId, updateUser
+    createNewUser, getAlluser, removeUser, getUserbyId, updateUser
 }

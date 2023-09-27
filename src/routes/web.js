@@ -6,7 +6,7 @@ const router = express.Router();
 const initWebRoutes = (app) => {
     router.get('/', homeController.getViewHome);
     router.get('/user', homeController.getViewUser);
-    router.post('/users/create-user', homeController.handleCreateUser);
+    router.post('/user/create-user', homeController.handleCreateUser);
     router.get('/list-user', homeController.displayListUser);
 
     router.post('/delete/user/:id', homeController.handleRemoveUser);

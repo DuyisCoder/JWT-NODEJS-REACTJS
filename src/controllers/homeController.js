@@ -1,4 +1,3 @@
-import connection from '../config/database'
 import userServices from '../services/userServices'
 const getViewUser = (req, res) => {
     res.render('user.ejs')
@@ -7,13 +6,12 @@ const getViewHome = async (req, res) => {
     res.render('home.ejs')
 }
 const handleCreateUser = async (req, res) => {
-    let { email, password, username, id } = req.body;
-    console.log("ID là :", id);
+    let { email, password, username } = req.body;
     userServices.createNewUser(email, password, username);
     res.redirect('/list-user');
 }
 const displayListUser = async (req, res) => {
-    let results = await userServices.getAllUsers();
+    let results = await userServices.getAlluser();
     res.render('listUser.ejs', { user: results });
 }
 const handleRemoveUser = async (req, res) => {

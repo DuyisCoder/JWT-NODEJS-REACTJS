@@ -15,8 +15,7 @@ const initWebRoutes = (app) => {
     router.get('/update/user/:id', homeController.updatePage);
     router.post('/update/user', homeController.updateUser);
 
-    // API
-    router.get('/api/test-api', apiController.testApi);
+
     return app.use('/', router);
 }
 

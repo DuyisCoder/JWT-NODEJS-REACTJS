@@ -1,23 +1,15 @@
 import express from 'express'
 import viewEngine from './config/viewEngine';
 import initWebRoutes from './routes/web';
+import initApiRoutes from './routes/api';
 import bodyParser from 'body-parser';
 import connection from './config/connectDB';
+import configCors from './config/cors';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 // Config Cors middle ware : Security website
-
-app.use(function (req, res, next) {
-    // Chỉ cho phép đường link REACT_URL gọi đến server 
-    res.setHeader('Access-Control-Allow-Origin', process.env.REACT_URL);
-    // PHÂN QUYỀN CÁC METHOD GET......
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,PUT,PATCH,DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    next();
-
-})
+configCors(app);
 //config view Engine
 viewEngine(app);
 //config body-parser
@@ -27,6 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 connection();
 // init WebRoute
 initWebRoutes(app);
+initApiRoutes(app);
 
 
 

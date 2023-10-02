@@ -73,5 +73,5 @@ const updateUser = async (email, username, userId) => {
     }, { where: { id: userId } })
 }
 module.exports = {
-    createNewUser, getAlluser, removeUser, getUserbyId, updateUser
+    createNewUser, getAlluser, removeUser, getUserbyId, updateUser, hashUserPassword
 }

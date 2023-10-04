@@ -33,8 +33,23 @@ const handleCreateUser = (req, res) => {
 const handleUpdateUser = (req, res) => {
 
 }
-const handleRemoveUser = (req, res) => {
-
+const handleRemoveUser = async (req, res) => {
+    try {
+        let data = await userApiServices.deleteUser(req.body.id);
+        console.log(data);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            EM: 'Error from sever',
+            EC: -1,
+            DT: ''
+        })
+    }
 }
 
 module.exports = { handleReadUser, handleCreateUser, handleUpdateUser, handleRemoveUser };

@@ -35,7 +35,10 @@ const getUserPagination = async (page, limit) => {
         let offset = (page - 1) * limit;
         const { count, rows } = await db.User.findAndCountAll({
             offset: offset,
-            limit: limit
+            limit: limit,
+            attributes: ["id", "username", "email", "sex", "phone"], // dùng để log ra những thông tin cần thiết
+            include: { model: db.Group, attributes: ["name", "description"] },
+            nest: true, // dùng để gom các trường chung vào 1 object
         })
         let totalPages = Math.ceil(count / limit);
         let data = {
@@ -77,5 +80,33 @@ const updateUser = async (data) => {
 
     }
 }
+const deleteUser = async (userId) => {
+    try {
+        let user = await db.User.findOne({
+            where: { id: userId }
+        })
+        if (user) {
+            await user.destroy();
+            return {
+                EM: 'Delete user success!',
+                EC: 0,
+                DT: []
+            }
+        } else {
+            return {
+                EM: 'User not exist!',
+                EC: -1,
+                DT: data
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            EM: 'Error!',
+            EC: 1,
+            DT: ""
+        }
+    }
+}
 
-module.exports = { getAllUser, getUserPagination }
+module.exports = { getAllUser, getUserPagination, deleteUser }

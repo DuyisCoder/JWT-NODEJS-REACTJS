@@ -24,7 +24,7 @@ const handleRegister = async (req, res) => {
         })
     } catch (error) {
         return res.status(500).json({
-            EM: 'Error',
+            EM: 'Error from server',
             EC: '-1',
             DT: ""
         })
@@ -32,11 +32,19 @@ const handleRegister = async (req, res) => {
 }
 const handleLogin = async (req, res) => {
     try {
-
         let data = await loginRegisterService.loginUser(req.body);
-        console.log(data.password);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
     } catch (err) {
-
+        console.log("Err:", err);
+        return res.status(500).json({
+            EM: 'Error from server',
+            EC: '-1',
+            DT: ""
+        })
     }
 }
 

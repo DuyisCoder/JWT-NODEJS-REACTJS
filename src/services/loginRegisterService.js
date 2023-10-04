@@ -1,5 +1,5 @@
-import { raw } from 'body-parser';
 import db from '../models/index.js'
+import { Op } from 'sequelize';
 import userServices from '../services/userServices.js'
 import bcrypt from 'bcryptjs'
 let checkEmailExist = async (userEmail) => {
@@ -71,12 +71,45 @@ const registerNewUser = async (rawUserData) => {
         }
     }
 }
+let checkHashPassword = (inputPassword, hashPassword) => {
+    return bcrypt.compareSync(inputPassword, hashPassword);
+}
 const loginUser = async (userData) => {
     try {
-        console.log("Hello");
+        let user = await db.User.findOne({
+            where: {
+                [Op.or]: [
+                    { email: userData.valueLogin },
+                    { phone: userData.valueLogin }
+                ]
+            }
+        })
+        if (user) {
+            console.log("Check PASS: ", userData.password);
+            console.log("Check PASS: ", user.password);
+            let isCorrectPassword = checkHashPassword(userData.password, user.password);
+            console.log(isCorrectPassword);
+            if (isCorrectPassword === true) {
+                return {
+                    EM: "Login success!",
+                    EC: 0,
+                    DT: ""
+                }
+            }
+        }
+        return {
+            EM: "Your email or password is incorrect!!",
+            EC: 1,
+            DT: ""
+        }
+
 
     } catch (error) {
-
+        console.log("Error", error);
+        return {
+            EM: "Wrongs in services....",
+            EC: 1
+        }
     }
 }
 

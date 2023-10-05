@@ -27,8 +27,22 @@ const handleReadUser = async (req, res) => {
         })
     }
 }
-const handleCreateUser = (req, res) => {
-
+const handleCreateUser = async (req, res) => {
+    try {
+        console.log(req.body);
+        let data = await userApiServices.createUser(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (error) {
+        return res.status(200).json({
+            EM: "Server is error",
+            EC: 1,
+            DT: ""
+        })
+    }
 }
 const handleUpdateUser = (req, res) => {
 

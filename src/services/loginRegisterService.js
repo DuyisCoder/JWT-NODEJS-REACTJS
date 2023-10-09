@@ -2,6 +2,9 @@ import db from '../models/index.js'
 import { Op } from 'sequelize';
 import userServices from '../services/userServices.js'
 import bcrypt from 'bcryptjs'
+import { getGroupWithRole } from '../services/JWTservices.js'
+import { createJWT } from '../middleware/JWTcookie.js'
+require('dotenv').config()
 let checkEmailExist = async (userEmail) => {
     let user = await db.User.findOne({
         where: { email: userEmail }
@@ -57,6 +60,7 @@ const registerNewUser = async (rawUserData) => {
             username: rawUserData.username,
             password: hashPassword,
             phone: rawUserData.phone,
+            groupId: 6
         })
         return {
 
@@ -85,15 +89,24 @@ const loginUser = async (userData) => {
             }
         })
         if (user) {
-            console.log("Check PASS: ", userData.password);
-            console.log("Check PASS: ", user.password);
             let isCorrectPassword = checkHashPassword(userData.password, user.password);
-            console.log(isCorrectPassword);
             if (isCorrectPassword === true) {
+                let groupWithRoles = await getGroupWithRole(user);
+                let payload = {
+                    email: userData.email,
+                    groupWithRoles,
+                    expiresIn: process.env.JWT_EXPIRES_IN // thời gian token hết hạn
+
+                }
+                let token = createJWT(payload);
+
                 return {
                     EM: "Login success!",
                     EC: 0,
-                    DT: ""
+                    DT: {
+                        access_token: token,
+                        data: groupWithRoles
+                    }
                 }
             }
         }

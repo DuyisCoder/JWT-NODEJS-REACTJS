@@ -18,11 +18,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // test db
 connection();
-//test JWT
-createJWT();
-let decoded = verifyToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTWluaCBEdXkiLCJhZ2UiOjIwLCJpYXQiOjE2OTY4MzQ2NjF9.UsvvxE6meVySTLddbgFWwLPx2pFDsnVhKcSD5zxZkjw');
+// //test JWT
+// createJWT();
+// let decoded = verifyToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTWluaCBEdXkiLCJhZ2UiOjIwLCJpYXQiOjE2OTY4MzQ2NjF9.UsvvxE6meVySTLddbgFWwLPx2pFDsnVhKcSD5zxZkjw');
 
-console.log(decoded);
+// console.log(decoded);
 // init WebRoute
 initWebRoutes(app);
 initApiRoutes(app);

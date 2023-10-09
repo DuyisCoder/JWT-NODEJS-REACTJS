@@ -1,32 +1,7 @@
 import bcrypt from 'bcryptjs'
 import db from '../models/index'
-const salt = bcrypt.genSaltSync(10);
-let checkEmailExist = async (userEmail) => {
-    let user = await db.User.findOne({
-        where: { email: userEmail }
-    })
-    if (user) {
-        return true;
-    }
-    return false;
-}
-let checkPhoneExist = async (userPhone) => {
-    let user = await db.User.findOne({
-        where: { phone: userPhone }
-    })
-    if (user) {
-        return true;
-    }
-    return false;
-}
-const hashUserPassword = (userPassword) => {
-    // // Mã hóa mật khẩu
-    // let hashPassword = bcrypt.hashSync(password, salt);
-    // // KT mật khẩu nhập có đúng với mật khẩu mã hóa
-    // let check = bcrypt.compareSync(password, hashPassword);
-    let hashPassword = bcrypt.hashSync(userPassword, salt);
-    return hashPassword;
-}
+import loginRegisterService from '../services/loginRegisterService'
+import userServices from '../services/userServices.js'
 const getAllUser = async () => {
     try {
         let users = await db.User.findAll({
@@ -64,8 +39,9 @@ const getUserPagination = async (page, limit) => {
             offset: offset,
             limit: limit,
             attributes: ["id", "username", "email", "sex", "phone"], // dùng để log ra những thông tin cần thiết
-            include: { model: db.Group, attributes: ["name", "description"] },
-            nest: true, // dùng để gom các trường chung vào 1 object
+            include: { model: db.Group, attributes: ["name", "description", "id"] },
+            nest: true, // dùng để gom các trường chung vào 1 object,
+            order: [['id', 'DESC']]
         })
         let totalPages = Math.ceil(count / limit);
         let data = {
@@ -97,34 +73,23 @@ const createUser = async (data) => {
                 DT: data.email
             }
         }
-        let isEmailExist = await checkEmailExist(data.email);
+        let isEmailExist = await loginRegisterService.checkEmailExist(data.email);
         if (isEmailExist === true) {
             return {
-                EM: 'The email is already exist!',
+                EM: 'The email is exist!!',
                 EC: 1,
-                DT: data.email
+                DT: 'email'
             }
         }
-
-        let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-        let isPassword = data.password;
-        let checkPass = regex.test(isPassword);
-        if (checkPass === false) {
-            return {
-                EM: 'Mật khẩu phải có 8 ký tự, 1 chữ cái viết Hoa , viết Thường và 1 số!',
-                EC: 1,
-                DT: data.password
-            }
-        }
-        let isPhoneExist = await checkPhoneExist(data.phone);
+        let isPhoneExist = await loginRegisterService.checkPhoneExist(data.phone);
         if (isPhoneExist === true) {
             return {
-                EM: 'The Phone is already exist!',
-                EC: 1,
-                DT: data.phone
+                EM: 'The phone number is already exist!',
+                EC: 2,
+                DT: 'phone',
             }
         }
-        let hashPassword = await hashUserPassword(data.password);
+        let hashPassword = await userServices.hashUserPassword(data.password);
         let user = await db.User.create({
             ...data,
             email: data.email,
@@ -148,16 +113,42 @@ const createUser = async (data) => {
 }
 const updateUser = async (data) => {
     try {
+        if (!data.groupId) {
+            return {
+                EM: "Error with groupId",
+                EC: -1,
+                DT: 'group'
+            }
+        }
         let user = await db.User.findOne({
             where: { id: data.id }
-        })
+        });
+        console.log("user", user);
+        console.log("data", data.id);
+        console.log(data.groupId);
+        console.log(data.sex);
+        console.log(data.address);
         if (user) {
-            await db.User.update({
-                email: data.email,
+            console.log("OK");
+            await user.update({
+                username: data.username,
+                address: data.address,
+                sex: data.sex,
+                groupId: data.groupId
             })
+            return {
+                EM: "Update User Success!",
+                EC: 0,
+                DT: ''
+            }
         }
     } catch (error) {
-
+        console.log(error);
+        return {
+            EM: "Update User Error!",
+            EC: 1,
+            DT: ""
+        }
     }
 }
 const deleteUser = async (userId) => {
@@ -189,4 +180,4 @@ const deleteUser = async (userId) => {
     }
 }
 
-module.exports = { getAllUser, getUserPagination, deleteUser, createUser }
+module.exports = { getAllUser, getUserPagination, deleteUser, createUser, updateUser }

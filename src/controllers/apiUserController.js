@@ -44,8 +44,23 @@ const handleCreateUser = async (req, res) => {
         })
     }
 }
-const handleUpdateUser = (req, res) => {
+const handleUpdateUser = async (req, res) => {
+    try {
 
+        let data = await userApiServices.updateUser(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: data.EC,
+            DT: ""
+        })
+    }
 }
 const handleRemoveUser = async (req, res) => {
     try {
@@ -59,7 +74,7 @@ const handleRemoveUser = async (req, res) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({
-            EM: 'Error from sever',
+            EM: 'Error from server',
             EC: -1,
             DT: ''
         })

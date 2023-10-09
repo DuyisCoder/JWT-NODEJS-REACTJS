@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs'
 import db from '../models/index'
 import loginRegisterService from '../services/loginRegisterService'
 import userServices from '../services/userServices.js'
+
 const getAllUser = async () => {
     try {
         let users = await db.User.findAll({
@@ -62,6 +63,10 @@ const getUserPagination = async (page, limit) => {
         }
     }
 }
+function regexPhone(phone) {
+    const regexPhoneNumber = /(0[3|5|7|8|9])+([0-9]{8})\b/g;
+    return regexPhoneNumber.test(phone) ? true : false;
+}
 const createUser = async (data) => {
     try {
         var re = /\S+@\S+\.\S+/;
@@ -81,6 +86,14 @@ const createUser = async (data) => {
                 DT: 'email'
             }
         }
+
+        if (regexPhone(data.phone) === false) {
+            return {
+                EM: 'The phone is number from 0 to 9!',
+                EC: 1,
+                DT: 'phone'
+            }
+        }
         let isPhoneExist = await loginRegisterService.checkPhoneExist(data.phone);
         if (isPhoneExist === true) {
             return {
@@ -89,7 +102,15 @@ const createUser = async (data) => {
                 DT: 'phone',
             }
         }
+        if (data.password.length < 6) {
+            return {
+                EM: 'Password is min 6!!',
+                EC: 2,
+                DT: 'password',
+            }
+        }
         let hashPassword = await userServices.hashUserPassword(data.password);
+
         let user = await db.User.create({
             ...data,
             email: data.email,

@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import connection from './config/connectDB';
 import configCors from './config/cors';
 import { createJWT, verifyToken } from './middleware/JWTcookie.js'
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -18,14 +19,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // test db
 connection();
-// //test JWT
-// createJWT();
-// let decoded = verifyToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTWluaCBEdXkiLCJhZ2UiOjIwLCJpYXQiOjE2OTY4MzQ2NjF9.UsvvxE6meVySTLddbgFWwLPx2pFDsnVhKcSD5zxZkjw');
+// config body-Parser - đặt trước file Routes
+app.use(cookieParser());
 
-// console.log(decoded);
+
 // init WebRoute
 initWebRoutes(app);
 initApiRoutes(app);
+
+
 
 
 

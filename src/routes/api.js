@@ -5,17 +5,17 @@ import groupController from '../controllers/groupController'
 import { checkUserJWT, checkUserPermission } from '../middleware/JWTcookie.js'
 const router = express.Router();
 
-const checkUser = (req, res, next) => {
-    const nonSecurePaths = ['/', '/login', '/register'];
-    if (nonSecurePaths.includes(req.path)) return next();
-    //authenticated user
-    if (user) {
+// const checkUser = (req, res, next) => {
+//     const nonSecurePaths = ['/', '/login', '/register'];
+//     if (nonSecurePaths.includes(req.path)) return next();
+//     //authenticated user
+//     if (user) {
 
-    } else {
+//     } else {
 
-    }
-    next();
-}
+//     }
+//     next();
+// }
 const initApiRoutes = (app) => {
     router.all('*', checkUserJWT, checkUserPermission);
 
@@ -24,6 +24,7 @@ const initApiRoutes = (app) => {
     router.post('/register', apiController.handleRegister);
     router.post('/login', apiController.handleLogin);
 
+    router.get('/account', apiUserController.getUserAccount);
     router.get('/user/read', apiUserController.handleReadUser);
     router.delete('/user/delete', apiUserController.handleRemoveUser);
     router.post('/user/create', apiUserController.handleCreateUser);

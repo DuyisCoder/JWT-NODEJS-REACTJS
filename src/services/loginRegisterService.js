@@ -94,6 +94,7 @@ const loginUser = async (userData) => {
                 let groupWithRoles = await getGroupWithRole(user);
                 let payload = {
                     email: userData.email,
+                    username: user.username,
                     groupWithRoles,
                     expiresIn: process.env.JWT_EXPIRES_IN // thời gian token hết hạn
 
@@ -105,7 +106,9 @@ const loginUser = async (userData) => {
                     EC: 0,
                     DT: {
                         access_token: token,
-                        data: groupWithRoles
+                        groupWithRoles,
+                        email: user.email,
+                        username: user.username,
                     }
                 }
             }

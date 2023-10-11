@@ -13,16 +13,73 @@ const createJWT = (payload) => {
 }
 const verifyToken = (token) => {
     let key = process.env.JWT_SECRET;
-    let data = null;
+    let decoded = null;
     try {
-        let decoded = jwt.verify(token, key);
-        data = decoded;
+        decoded = jwt.verify(token, key);
     } catch (e) {
         console.log(e);
     }
-    return data;
+    return decoded;
 }
 
+const checkUserJWT = (req, res, next) => {
+    let cookies = req.cookies;
+    console.log(cookies);
+    if (cookies && cookies.jwt) {
+        let token = cookies.jwt;
+        let decoded = verifyToken(token);
+        if (decoded) {
+            req.user = decoded
+            next();
+        } else {
+            return res.status(401).json({
+                EM: "Not authenticated a User!",
+                EC: 1,
+                DT: ''
+            })
+        }
+    } else {
+        return res.status(401).json({
+            EM: "Not authenticated a User!",
+            EC: 1,
+            DT: ''
+        })
+    }
+}
+const checkUserPermission = (req, res, next) => {
+    if (req.user) {
+        let roles = req.user.groupWithRoles.Roles;
+        let currentUrl = req.path;
+        console.log("URL hiện tại", currentUrl);
+        let email = req.user.email;
+        if (!roles && roles.length === 0) {
+            return res.status(403).json({
+                EM: "Your don't have permission to access this resource",
+                EC: 1,
+                DT: ''
+            })
+        } else {
+            let canAccess = roles.some((item) => item.url === currentUrl);
+
+            if (canAccess === true) {
+                next();
+            } else {
+                return res.status(403).json({
+                    EM: "Your don't have permission to access this resource",
+                    EC: 1,
+                    DT: ''
+                })
+            }
+        }
+    } else {
+        return res.status(401).json({
+            EM: "Not authenticated a User!",
+            EC: 1,
+            DT: ''
+        })
+    }
+
+}
 module.exports = {
-    createJWT, verifyToken
+    createJWT, verifyToken, checkUserJWT, checkUserPermission
 }

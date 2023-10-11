@@ -29,7 +29,6 @@ const handleReadUser = async (req, res) => {
 }
 const handleCreateUser = async (req, res) => {
     try {
-        console.log(req.body);
         let data = await userApiServices.createUser(req.body);
         return res.status(200).json({
             EM: data.EM,

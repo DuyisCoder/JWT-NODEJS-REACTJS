@@ -7,8 +7,13 @@ const configCors = (app) => {
         res.setHeader('Access-Control-Allow-Origin', process.env.REACT_URL);
         // PHÂN QUYỀN CÁC METHOD GET......
         res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,PUT,PATCH,DELETE');
-        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type,Authorization');
+        // -> BE cần phải setup 'Access-Control-Allow-Headers' chấp nhận req có cái header X-Reques,Authorization 
         res.setHeader('Access-Control-Allow-Credentials', true);
+        if (req.method === 'OPTIONS') {
+            return res.sendStatus(200);
+        }
         next();
 
     })

@@ -1,6 +1,7 @@
 require('dotenv').config();
 import jwt from 'jsonwebtoken'
-const nonSecurePaths = ['/', '/login', '/register'];
+// Bỏ qua các router không cần check 
+const nonSecurePaths = ['/', '/login', '/register', '/logout'];
 const createJWT = (payload) => {
     let key = process.env.JWT_SECRET;
     let token = null;
@@ -29,7 +30,10 @@ const checkUserJWT = (req, res, next) => {
     if (nonSecurePaths.includes(req.path)) return next();
     let cookies = req.cookies;
     let tokenFormHeader = extractToken(req);
+    console.log("111111", tokenFormHeader);
     if ((cookies && cookies.jwt) || tokenFormHeader) {
+        console.log("hear", tokenFormHeader);
+        console.log("cookies", cookies);
         let token = cookies && cookies.jwt ? cookies.jwt : tokenFormHeader;
         let decoded = verifyToken(token);
         if (decoded) {
